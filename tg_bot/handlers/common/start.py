@@ -1,21 +1,59 @@
-from aiogram import Router
+from aiogram import Router, F
 from aiogram.filters import CommandStart, Command
 from aiogram.types import Message
+from aiogram.fsm.context import FSMContext
+
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from services.users import (
+    normalize_phone,
+    get_user_by_phone,
+    attach_telegram_to_user,
+    get_user_by_telegram_id 
+)
+from tg_bot.handlers.user.states import ProfileCreate
+from tg_bot.keyboards.auth import request_contact_kb
 
 private_router = Router()
 group_router = Router()
 global_router = Router()
 
 # /start - в личном/групповом чате
-@global_router.message(CommandStart())
-async def cmd_start(message: Message):
+@private_router.message(CommandStart())
+async def cmd_start(message: Message, db: AsyncSession):
+    user = await get_user_by_telegram_id(db, message.from_user.id)
+    if user:
+        await message.answer("Ты уже авторизован, /help — список команд.")
+        return
+
     await message.answer(
-        "Привет! 👋\n"
-        "Я бот платформы информационного комьюнити ITAcadem на базе StartUP (СИЭУиП).\n"
-        "Используй:\n"
-        "/info - чтобы узнать обо мне по больше.\n"
-        "/help - чтобы посмотреть команды."
+        "Для авторизации отправь свой номер телефона кнопкой ниже.",
+        reply_markup=request_contact_kb,
     )
+
+@private_router.message(F.contact)
+async def handle_contact(message: Message, state: FSMContext, db: AsyncSession):
+    contact = message.contact
+    if contact.user_id != message.from_user.id:
+        await message.answer("Нужен именно твой номер, а не чужой.")
+        return
+
+    phone = normalize_phone(contact.phone_number)
+    tg_id = message.from_user.id
+
+    user = await get_user_by_phone(db, phone)
+
+    if user:
+        await attach_telegram_to_user(db, user, tg_id)
+        await message.answer(
+            f"Найден существующий профиль. Твой ID: {user.id}"
+        )
+        return
+
+    # пользователя нет — запускаем мастер создания профиля
+    await state.update_data(phone=phone, tg_id=tg_id)
+    await message.answer("Профиль не найден.\nКак тебя зовут? (имя)")
+    await state.set_state(ProfileCreate.first_name)
 
 # /info - в личном/групповом чате
 @global_router.message(Command("info"))

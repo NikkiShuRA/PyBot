@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import date
 from typing import List, Optional
 
-from sqlalchemy import BigInteger, Integer, Text, ForeignKey, Date
+from sqlalchemy import BigInteger, Integer, Text, ForeignKey, Date, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from ...base_class import Base
@@ -19,8 +19,12 @@ class User(Base):
     phone_number: Mapped[Optional[str]] = mapped_column(Text)
     telegram_id: Mapped[int] = mapped_column(BigInteger, nullable=False, unique=True)
     github_url: Mapped[Optional[str]] = mapped_column(Text)
-    join_date: Mapped[Optional[date]] = mapped_column(Date)
 
+    join_date: Mapped[date] = mapped_column(
+        Date,
+        nullable=False,
+        server_default=func.current_date(),   # или func.now() с DateTime
+    )
     activity_status_id: Mapped[Optional[int]] = mapped_column(
         BigInteger,
         ForeignKey("user_activity_statuses.id"),
