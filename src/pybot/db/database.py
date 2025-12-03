@@ -2,10 +2,10 @@ from __future__ import annotations
 
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
-from config import DATABASE_URL
-from db_class.base_class import Base
+from ..core.config import settings
+from .base_class import Base
 
-engine = create_async_engine(DATABASE_URL, echo=False)
+engine = create_async_engine(settings.database_url, echo=False)
 
 SessionLocal = async_sessionmaker(
     bind=engine,

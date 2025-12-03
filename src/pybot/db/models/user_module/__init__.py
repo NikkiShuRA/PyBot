@@ -1,0 +1,26 @@
+from ...base_class import Base
+
+from .user import User
+from .user_activity_status import UserActivityStatus
+from .admin_role import AdminRole
+from .academic_role import AcademicRole
+from .level import Level
+from .competence import Competence
+from .user_competence import UserCompetence
+from .user_achievement import UserAchievement
+from .user_tasks import UserTask
+from .valuation import Valuation
+
+__all__ = [
+    "Base",
+    "User",
+    "UserActivityStatus",
+    "AdminRole",
+    "AcademicRole",
+    "Level",
+    "Competence",
+    "UserCompetence",
+    "UserAchievement",
+    "UserTask",
+    "Valuation",
+]
