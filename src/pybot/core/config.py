@@ -19,9 +19,6 @@ class BotSettings(BaseSettings):
 
     database_url: str | None = None
 
-    log_level: str = Field(..., alias="LOG_LEVEL")
-    debug: bool = Field(..., alias="DEBUG")
-
     @model_validator(mode="after")
     def assemble_db_url(self) -> BaseSettings:
         """Автоматически формирует URL для подключения к БД"""
