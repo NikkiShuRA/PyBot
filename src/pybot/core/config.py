@@ -17,6 +17,9 @@ class BotSettings(BaseSettings):
 
     database_url: str | None = None
 
+    log_level: str = Field("INFO", alias="LOG_LEVEL", description="Уровень логирования")
+    debug: bool = Field(False, alias="DEBUG", description="Режим отладки")
+
     class Config:
         env_file = ".env"
         env_file_encoding = "utf-8"
