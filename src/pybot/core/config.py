@@ -8,7 +8,7 @@ class BotSettings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 
     # Telegram settings
-    bot_token: str = Field(..., alias="BOT_TOKEN", description="Токен тестового бота")
+    bot_token: str = Field(..., alias="BOT_TOKEN", description="Токен бота")
 
     # Database settings
     db_user: str = Field(..., alias="DB_USER", description="Пользователь PostgreSQL")
