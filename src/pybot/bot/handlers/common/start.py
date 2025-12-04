@@ -1,17 +1,13 @@
-from aiogram import F, Router
+from aiogram import F
 from aiogram.filters import Command, CommandStart
 from aiogram.types import Message
 from aiogram_dialog import DialogManager
-from services.users import attach_telegram_to_user, get_user_by_phone, get_user_by_telegram_id
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ....utils.phone_utils import normalize_phone
+from ....services.users import attach_telegram_to_user, get_user_by_phone, get_user_by_telegram_id
 from ...dialogs.user.states import CreateProfileSG
 from ...keyboards.auth import request_contact_kb
-
-private_router = Router()
-group_router = Router()
-global_router = Router()
+from . import global_router, group_router, private_router
 
 
 # /start - в личном чате
@@ -41,7 +37,8 @@ async def handle_contact(message: Message, dialog_manager: DialogManager, db: As
         await message.answer("Нужен именно твой номер, а не чужой.")
         return
 
-    phone = await normalize_phone(contact.phone_number)
+    # phone = await normalize_phone(contact.phone_number)
+    phone = contact.phone_number
     tg_id = message.from_user.id
 
     user = await get_user_by_phone(db, phone)

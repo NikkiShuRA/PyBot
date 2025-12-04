@@ -14,7 +14,7 @@ async def normalize_phone(phone_raw: str) -> str:
     """
 
     # оставляем только цифры
-    digits = re.sub(r"\D", "", phone_raw)
+    digits = re.sub(r"[^\d+]", "", phone_raw)
 
     # вариант 1: уже с «8» или «7» и 11 цифр
     if len(digits) == PhoneConstants.NumberLengthWithCountryCode and digits[0] in {"7", "8"}:
