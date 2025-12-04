@@ -3,9 +3,9 @@ from aiogram_dialog import Dialog, DialogManager, Window
 from aiogram_dialog.widgets.input import MessageInput
 from aiogram_dialog.widgets.kbd import Back, Cancel
 from aiogram_dialog.widgets.text import Const, Format
-from services.users import create_user_profile
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from ....services.users import create_user_profile
 from .states import CreateProfileSG
 
 
