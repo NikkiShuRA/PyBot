@@ -1,9 +1,11 @@
-from pydantic import Field, ValidationInfo, field_validator
-from pydantic_settings import BaseSettings
+from pydantic import Field, model_validator
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class BotSettings(BaseSettings):
     """Конфигурация бота с валидацией и типизацией"""
+
+    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 
     # Telegram settings
     bot_token: str = Field(..., alias="BOT_TOKEN", description="Токен тестового бота")
@@ -17,27 +19,17 @@ class BotSettings(BaseSettings):
 
     database_url: str | None = None
 
-    log_level: str = Field("INFO", alias="LOG_LEVEL", description="Уровень логирования")
-    debug: bool = Field(False, alias="DEBUG", description="Режим отладки")
+    log_level: str = Field(..., alias="LOG_LEVEL")
+    debug: bool = Field(..., alias="DEBUG")
 
-    class Config:
-        env_file = ".env"
-        env_file_encoding = "utf-8"
-        case_sensitive = False
-
-    @field_validator("database_url", mode="before")
-    def assemble_db_url(cls, v: str | None, info: ValidationInfo) -> str:  # noqa: N805
+    @model_validator(mode="after")
+    def assemble_db_url(self) -> BaseSettings:
         """Автоматически формирует URL для подключения к БД"""
-        if v:
-            return v
-
-        values = info.data
-        return (
-            f"postgresql+asyncpg://"
-            f"{values['db_user']}:{values['db_pass']}@"
-            f"{values['db_host']}:{values['db_port']}/"
-            f"{values['db_name']}"
-        )
+        if self.database_url is None:
+            self.database_url = (
+                f"postgresql+asyncpg://{self.db_user}:{self.db_pass}@{self.db_host}:{self.db_port}/{self.db_name}"
+            )
+        return self
 
 
 settings: BotSettings = BotSettings()
