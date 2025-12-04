@@ -39,11 +39,6 @@ def setup_logger() -> Logger:
     return loguru_logger
 
 # src/pybot/core/logger.py
-import sys
-
-from loguru import logger as loguru_logger
-
-from .config import settings
 
 
 def setup_logger() -> loguru_logger:
