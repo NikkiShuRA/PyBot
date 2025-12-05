@@ -2,7 +2,7 @@
 from aiogram import Router, F
 
 # from . import profile_create
-from .create_profile_dialog import profile_create_dialog
+from .windows import profile_create_dialog
 
 from ...filters import create_chat_type_routers
 
