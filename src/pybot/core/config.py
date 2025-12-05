@@ -19,8 +19,11 @@ class BotSettings(BaseSettings):
 
     database_url: str | None = None
 
-    log_level: str = Field(..., alias="LOG_LEVEL")
-    debug: bool = Field(..., alias="DEBUG")
+    log_level: str = Field("INFO", alias="LOG_LEVEL", description="Уровень логирования")
+    debug: bool = Field(False, alias="DEBUG", description="Режим отладки")
+
+    log_level: str = Field("INFO", alias="LOG_LEVEL", description="Уровень логирования")
+    debug: bool = Field(False, alias="DEBUG", description="Режим отладки")
 
     @model_validator(mode="after")
     def assemble_db_url(self) -> BaseSettings:
