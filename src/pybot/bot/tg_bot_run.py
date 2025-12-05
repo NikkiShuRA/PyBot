@@ -36,7 +36,7 @@ class DbSessionMiddleware(BaseMiddleware):
 async def tg_bot_main() -> None:
     bot = Bot(settings.bot_token_test)
     dp = Dispatcher()
-    dp.message.middleware(DbSessionMiddleware(SessionLocal))
+    dp.update.middleware(DbSessionMiddleware(SessionLocal))
 
     # Подключаем остальные роутеры common
     dp.include_router(common_router)
